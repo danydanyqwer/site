@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pentru Tine ❤️</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;600&display=swap');
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #ffe6e6;
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            flex-direction: column;
+            text-align: center;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        #questionScreen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        h1 {
+            font-family: 'Pacifico', cursive;
+            color: #ff4d4d;
+            font-size: 1.8rem;
+            margin: 10px 0;
+            text-shadow: 2px 2px #fff;
+            line-height: 1.2;
+            flex-shrink: 0;
+        }
+
+        .gif-container {
+            flex-shrink: 1;
+            /* Rezervăm spațiu ca să nu sară pagina când se schimbă poza */
+            min-height: 200px; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .gif-container img {
+            max-width: 100%;
+            max-height: 30vh;
+            width: auto;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .btn-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            width: 100%;
+            flex-shrink: 0;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        #yesBtn {
+            background-color: #ff4d4d;
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 77, 77, 0.4);
+        }
+        
+        #noBtn {
+            background-color: white;
+            color: #ff4d4d;
+            border: 2px solid #ff4d4d;
+        }
+
+        #message {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: popIn 0.6s ease;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Ascundem imaginile de preload */
+        .preload {
+            display: none;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="preload">
+        <img id="preloadSad" src="" alt="preload">
+    </div>
+
+    <div id="questionScreen">
+        <div class="gif-container">
+            <img id="mainImage" src="https://media.tenor.com/gUiu1zyxfzYAAAAi/bear-kiss-bear-kisses.gif" alt="Cute Bear">
+        </div>
+        <h1 id="questionText">Will you be my Valentine? 🥺</h1>
+        
+        <div class="btn-container">
+            <button id="yesBtn" onclick="sheSaidYes()">DA! ❤️</button>
+            <button id="noBtn" onclick="moveNo()">Nu</button>
+        </div>
+    </div>
+
+    <div id="message">
+        <div class="gif-container">
+            <img src="https://media1.tenor.com/m/pN7xf12qQcwAAAAC/cuddle-cute.gif" alt="Happy Bear">
+        </div>
+        <h1>Yeeey! Te iubesc mult! 💖</h1>
+        <p>Știam eu că iei decizia corectă! 😉</p>
+    </div>
+
+    <script>
+        // Link-ul pentru ursulețul trist (Bubu Dudu crying)
+        const sadBearLink = "https://media1.tenor.com/m/3OJLuggNiuUAAAAC/bubu-dudu-crying.gif"; 
+
+        // Setăm imaginea de preload imediat
+        document.getElementById('preloadSad').src = sadBearLink;
+
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const questionText = document.getElementById('questionText');
+        const mainImage = document.getElementById('mainImage');
+        const questionScreen = document.getElementById('questionScreen');
+        const message = document.getElementById('message');
+
+        const messages = [
+            "Nu",
+            "Ești sigură?",
+            "Chiar foarte sigură?",
+            "Mai gândește-te puțin... 🥺",
+            "Uită-te la boticul meu!",
+            "Dacă zici nu, o să fiu foarte trist...", // La următorul click se schimbă poza
+            "O să plâng foarte tare...",
+            "Chiar vrei să mă faci să plâng?",
+            "Ok, gata, mi-ai frânt inima... 💔",
+            "Glumeam, te rog spune DA! ❤️",
+            "TE ROOOOOOOOG APASA DA"
+        ];
+
+        let messageIndex = 0;
+        let yesBtnFontSize = 1.1; 
+        let yesBtnPaddingX = 25; 
+        let yesBtnPaddingY = 12; 
+
+        function moveNo() {
+            messageIndex++;
+
+            if (messageIndex < messages.length) {
+                noBtn.innerText = messages[messageIndex];
+                
+                // Creștem butonul DA
+                yesBtnFontSize += 0.4;
+                yesBtnPaddingX += 10;
+                yesBtnPaddingY += 5;
+
+                yesBtn.style.fontSize = `${yesBtnFontSize}rem`;
+                yesBtn.style.padding = `${yesBtnPaddingY}px ${yesBtnPaddingX}px`;
+
+                // Schimbăm imaginea cu cea tristă la momentul potrivit
+                if (messageIndex === 6) {
+                    mainImage.src = sadBearLink; 
+                }
+
+            } else {
+                // FAZA FINALĂ
+                noBtn.style.display = "none";
+                questionText.style.display = "none";
+                mainImage.style.display = "none"; 
+
+                yesBtn.innerText = "DA! ❤️ (Nu mai ai de ales)";
+                yesBtn.style.position = "fixed";
+                yesBtn.style.top = "0";
+                yesBtn.style.left = "0";
+                yesBtn.style.width = "100vw";
+                yesBtn.style.height = "100vh";
+                yesBtn.style.fontSize = "2.5rem";
+                yesBtn.style.borderRadius = "0";
+                yesBtn.style.zIndex = "1000";
+                yesBtn.style.display = "flex";
+                yesBtn.style.justifyContent = "center";
+                yesBtn.style.alignItems = "center";
+            }
+        }
+
+        function sheSaidYes() {
+            questionScreen.style.display = 'none';
+            message.style.display = 'flex';
+            document.body.style.backgroundColor = "#ffcccc";
+        }
+    </script>
+</body>
+</html>
